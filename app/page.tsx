@@ -1,8 +1,10 @@
 import React from 'react'
-
+import {Register} from  "../components/forms/page"
 const Page = () => {
     return (
-        <div>Page</div>
+        <div>
+            <Register />
+        </div>
     )
 }
 export default Page

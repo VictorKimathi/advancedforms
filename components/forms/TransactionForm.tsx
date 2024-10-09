@@ -159,7 +159,7 @@ const TransactionForm = () => {
                 />
 
                 {/* Render Select based on selected category */}
-                {selectedCategory && (
+
                     <CustomFormField
                         fieldType={FormFieldType.SELECT}
                         control={form.control}
@@ -171,15 +171,16 @@ const TransactionForm = () => {
                                     <SelectItem  key={index} value={option}>
                                       {option}
                                     </SelectItem >
+
                                 ))}
 
 
-
+                                {/*{(activeCategory).forEach()}*/}
 
                             </Select>
                         )}
                     />
-                )}
+
 
 
                 <h2>Select Your Account Providers</h2>

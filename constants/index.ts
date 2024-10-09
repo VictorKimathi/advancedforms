@@ -1,6 +1,31 @@
 export const GenderOptions = ["Male", "Female", "Other"];
 export const CategoryOptions = ["income","expense"]
 
+export const sidebarLinks = [
+    {
+        imgURL: "/icons/home.svg",
+        route: "/customer/123/dashboard/home",
+        label: "Home",
+    },
+
+    {
+        imgURL:"/icons/dollar-circle.svg",
+        route:"/customer/123/dashboard/transaction",
+        label:"Enter Transactions"
+    },
+    {
+        imgURL:"/icons/dollar-circle.svg",
+        route:"/customer/123/dashboard/chat",
+        label:"ChatBot"
+    },
+    {
+        imgURL:"/icons/dollar-circle.svg",
+        route:"//customer/123/dashboard/hub",
+        label:"AI Hub"
+    },
+
+
+];
 
 export const IncomeSubCategoryOptions = [
     "Salary",

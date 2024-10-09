@@ -5,35 +5,21 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import CustomFormField, { FormFieldType } from "../CustomFormField";
-
 import {
-
     FormControl,
     FormDescription,
     FormField,
     FormItem,
     FormLabel,
     FormMessage,
-} from "@/components/ui/form"
+} from "@/components/ui/form";
 import { Form } from "@/components/ui/form";
-// import { createUser } from "@/lib/actions/patient.actions";
 import { UserFormValidation } from "@/lib/vallidation";
-
-// import CustomFormField from "@/components/CustomFormField"
-
-
-
-
-
-
+import SubmitButton from "../SubmitButton";
 
 import "react-phone-number-input/style.css";
-
-// import CustomFormField, { FormFieldType } from "../CustomFormField";
-import SubmitButton from "../SubmitButton";
 
 export const Register = () => {
     const router = useRouter();
@@ -52,21 +38,40 @@ export const Register = () => {
         setIsLoading(true);
 
         try {
+            // Create user object
             const user = {
                 name: values.name,
                 email: values.email,
                 phone: values.phone,
             };
 
-if(user){
-    router.push(`/customer/${123}/Register`);
-}
+            // Log the user information
+            console.log("User Information:", user);
 
+            // Send POST request to API endpoint
+            const response = await fetch("/api/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(user),
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to register user");
+            }
+
+            // Handle successful registration (e.g., redirect)
+            const data = await response.json();
+            console.log("Registration successful:", data);
+
+            // Redirect to another page after successful registration
+            router.push(`/customer/${123}/Register`);
         } catch (error) {
-            console.log(error);
+            console.error("Registration error:", error);
+        } finally {
+            setIsLoading(false);
         }
-
-        setIsLoading(false);
     };
 
     return (
@@ -74,13 +79,8 @@ if(user){
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 space-y-6">
                 <section className="mb-12 space-y-4">
                     <h1 className="header">Hi there 👋</h1>
-                    <p className="text-dark-700">Hi there tell us more about yourself  .</p>
+                    <p className="text-dark-700">Hi there, tell us more about yourself.</p>
                 </section>
-
-
-
-
-
 
                 <CustomFormField
                     fieldType={FormFieldType.INPUT}
@@ -91,8 +91,6 @@ if(user){
                     iconSrc="/assets/icons/user.svg"
                     iconAlt="user"
                 />
-
-
 
                 <CustomFormField
                     fieldType={FormFieldType.INPUT}
@@ -111,8 +109,6 @@ if(user){
                     label="Phone number"
                     placeholder="(555) 123-4567"
                 />
-
-
 
                 <SubmitButton isLoading={isLoading}>Get Started</SubmitButton>
             </form>

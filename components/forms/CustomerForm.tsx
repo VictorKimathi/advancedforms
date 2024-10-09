@@ -70,10 +70,11 @@ const RegisterForm = ({ user }: { user: User }) => {
             };
 
             // const newCustomer = await registerCustomer(customer);
-
+            console.log("Hello")
+console.log(customer);
 if(customer){
 
-                router.push(`/customer/${123}/success`);
+                router.replace(`/customer/${123}/success`);
 }
 
         } catch (error) {

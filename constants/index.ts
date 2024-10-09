@@ -1,5 +1,5 @@
 export const GenderOptions = ["Male", "Female", "Other"];
-export const CategoryOptions = ["Income","Expense"]
+export const CategoryOptions = ["income","expense"]
 
 
 export const IncomeSubCategoryOptions = [

@@ -1,4 +1,32 @@
 export const GenderOptions = ["Male", "Female", "Other"];
+export const CategoryOptions = ["income","expense"]
+
+
+export const IncomeSubCategoryOptions = [
+    "Salary",
+    "Freelance Work",
+    "Investment Income",
+    "Rental Income",
+    "Business Income",
+    "Interest Income",
+    "Dividends",
+    "Royalties",
+    "Gifts and Grants",
+    "Other Income"
+];
+
+export const ExpenseSubCategoryOptions = [
+    "Rent",
+    "Utilities",
+    "Groceries",
+    "Transportation",
+    "Insurance",
+    "Healthcare",
+    "Entertainment",
+    "Dining Out",
+    "Clothing",
+    "Miscellaneous"
+];
 
 export const accountProviders = [
     "Mpesa",
@@ -26,6 +54,18 @@ export const accountProviders = [
     "Trust Wallet",
     "Binance Wallet",
 ];
+
+
+export const dummyAccount = [
+    "Mpesa",
+    "Airtel Money",
+    "Paypal",
+    "Equity Bank",
+    "Binance Wallet",
+]
+
+
+
 export const CustomerFormDefaultValues = {
     name: "",
     email: "",

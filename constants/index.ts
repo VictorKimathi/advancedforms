@@ -26,8 +26,30 @@ export const accountProviders = [
     "Trust Wallet",
     "Binance Wallet",
 ];
-
-
+export const CustomerFormDefaultValues = {
+    name: "",
+    email: "",
+    phone: "",
+    birthDate: new Date(Date.now()),
+    gender: "Male" as Gender,
+    address: "",
+    occupation: "",
+    emergencyContactName: "",
+    emergencyContactNumber: "",
+    accountProviders: [],
+    savingAmount: "",
+    debt: "",
+    income: "",
+    description: "",
+    subscriptionInformation: "",
+    identificationType: "Birth Certificate",
+    identificationNumber: "",
+    identificationDocument: [],
+    financialAdviceConsent: false,
+    dataSharingConsent: false,
+    privacyPolicyConsent: false,
+    automatedDecisionConsent: false,
+};
 
 export const PatientFormDefaultValues = {
     firstName: "",

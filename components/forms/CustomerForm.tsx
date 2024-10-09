@@ -36,20 +36,9 @@ const RegisterForm = ({ user }: { user: User }) => {
     const onSubmit = async (values: z.infer<typeof CustomerFormValidation>) => {
         setIsLoading(true);
 
-        // Store file info in form data if applicable
-        let formData;
-        if (
-            values.identificationDocument &&
-            values.identificationDocument?.length > 0
-        ) {
-            const blobFile = new Blob([values.identificationDocument[0]], {
-                type: values.identificationDocument[0].type,
-            });
 
-            formData = new FormData();
-            formData.append("blobFile", blobFile);
-            formData.append("fileName", values.identificationDocument[0].name);
-        }
+
+
 
         try {
             const customer = {
@@ -80,11 +69,13 @@ const RegisterForm = ({ user }: { user: User }) => {
                 automatedDecisionConsent: values.automatedDecisionConsent,
             };
 
-            const newCustomer = await registerCustomer(customer);
+            // const newCustomer = await registerCustomer(customer);
 
-            if (newCustomer) {
-                router.push(`/customers/${user.$id}/dashboard`);
-            }
+if(customer){
+
+                router.push(`/customer/${123}/success`);
+}
+
         } catch (error) {
             console.error(error);
         }

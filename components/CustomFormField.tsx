@@ -1,11 +1,10 @@
 /* eslint-disable no-unused-vars */
 
-/** */
 import { E164Number } from "libphonenumber-js/core";
 import Image from "next/image";
 // @ts-ignore
 import ReactDatePicker from "react-datepicker";
-import { Control } from "react-hook-form";
+import { Control, FieldValues, UseFormRegister } from "react-hook-form";
 import PhoneInput from "react-phone-number-input";
 
 import { Checkbox } from "@/components/ui/checkbox";
@@ -31,7 +30,7 @@ export enum FormFieldType {
 }
 
 interface CustomProps {
-    control: Control<any>;
+    control: Control<FieldValues>;
     name: string;
     label?: string;
     placeholder?: string;
@@ -64,6 +63,7 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
                             placeholder={props.placeholder}
                             {...field}
                             className="shad-input border-0"
+                            disabled={props.disabled}
                         />
                     </FormControl>
                 </div>
@@ -115,14 +115,14 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
                         src="/assets/icons/calendar.svg"
                         height={24}
                         width={24}
-                        alt="user"
+                        alt="calendar icon"
                         className="ml-2"
                     />
                     <FormControl>
                         <ReactDatePicker
                             showTimeSelect={props.showTimeSelect ?? false}
                             selected={field.value}
-                            onChange={(date: Date) => field.onChange(date)}
+                            onChange={(date: Date | null) => field.onChange(date)}
                             timeInputLabel="Time:"
                             dateFormat={props.dateFormat ?? "MM/dd/yyyy"}
                             wrapperClassName="date-picker"
@@ -134,11 +134,9 @@ const RenderInput = ({ field, props }: { field: any; props: CustomProps }) => {
             return (
                 <FormControl>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                            <SelectTrigger className="shad-select-trigger">
-                                <SelectValue placeholder={props.placeholder} />
-                            </SelectTrigger>
-                        </FormControl>
+                        <SelectTrigger className="shad-select-trigger">
+                            <SelectValue placeholder={props.placeholder} />
+                        </SelectTrigger>
                         <SelectContent className="shad-select-content">
                             {props.children}
                         </SelectContent>
@@ -165,7 +163,6 @@ const CustomFormField = (props: CustomProps) => {
                         <FormLabel className="shad-input-label">{label}</FormLabel>
                     )}
                     <RenderInput field={field} props={props} />
-
                     <FormMessage className="shad-error" />
                 </FormItem>
             )}

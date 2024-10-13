@@ -16,10 +16,23 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Form } from "@/components/ui/form";
-import { UserFormValidation } from "@/lib/vallidation";
+import { UserFormValidation } from "@/lib/validation";
 import SubmitButton from "../SubmitButton";
 
 import "react-phone-number-input/style.css";
+
+const user = {
+    "username": "victor123",
+    "email": "victor.codes9532@gmail.com",
+    "password": "securePassword123",
+    "profile": {
+      "phone_number": "0712345678",
+      "gender": "male",  // Valid value from GENDER_CHOICES
+      "occupation": "software_dev",  // Valid value from OCCUPATION_CHOICES
+      "date_of_birth": "1995-05-15"
+    }
+  }
+
 
 export const Register = () => {
     const router = useRouter();
@@ -85,8 +98,8 @@ export const Register = () => {
                 <CustomFormField
                     fieldType={FormFieldType.INPUT}
                     control={form.control}
-                    name="name"
-                    label="Full name"
+                    name="username"
+                    label="Username"
                     placeholder="John Doe"
                     iconSrc="/assets/icons/user.svg"
                     iconAlt="user"

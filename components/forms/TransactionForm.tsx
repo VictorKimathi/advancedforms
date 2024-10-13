@@ -1,5 +1,15 @@
 "use client";
 
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Paper,
+} from '@mui/material';
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -9,11 +19,11 @@ import { z } from "zod";
 import { Form, FormControl } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Select } from "@/components/ui/select"; // Import the Select component
+import { Select } from "@/components/ui/select";
 import { SelectItem } from "@/components/ui/select";
 import { dummyAccount } from "@/constants";
 import { CategoryOptions, IncomeSubCategoryOptions, ExpenseSubCategoryOptions, CustomerFormDefaultValues } from "@/constants";
-import { CustomerFormValidation } from "@/lib/vallidation";
+import { CustomerFormValidation } from "@/lib/validation";
 
 import "react-datepicker/dist/react-datepicker.css";
 import "react-phone-number-input/style.css";
@@ -21,22 +31,15 @@ import CustomFormField, { FormFieldType } from "@/components/CustomFormField";
 import SubmitButton from "@/components/SubmitButton";
 
 const TransactionForm = () => {
-
-
-    var activeCategory = IncomeSubCategoryOptions;
+    let activeCategory = IncomeSubCategoryOptions;
     const user = {
-        name:"victor Kimathi",
-        email:"victorcodes9532@gmail.com",
-        phone:"0717382028"
-    }
+        name: "victor Kimathi",
+        email: "victorcodes9532@gmail.com",
+        phone: "0717382028"
+    };
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
-    const [selectedCategory, setSelectedCategory] = useState(""); // State to track the selected category
-    const [transactionType, setTransactionType] = useState('income'); // Default to income
-    const [category, setCategory] = useState('');
-    const [subcategory, setSubcategory] = useState('');
-    const [description, setDescription] = useState('');
-
+    const [selectedCategory, setSelectedCategory] = useState("income");
 
     const form = useForm<z.infer<typeof CustomerFormValidation>>({
         resolver: zodResolver(CustomerFormValidation),
@@ -46,61 +49,21 @@ const TransactionForm = () => {
             email: user.email,
             phone: user.phone,
         },
-
     });
+
     const handleTransactionTypeChange = (value) => {
-        // setTransactionType(value);
-        // console.log(transactionType)
-        //TODO(remember to add authentication)
-        console.log("Before",activeCategory.toLocaleString())
-
-        if (value == "income"){
-            activeCategory.splice(0,activeCategory.length);
-            activeCategory.push(IncomeSubCategoryOptions);
-
-        }
-        else
-        {
-
-
-            activeCategory.push(ExpenseSubCategoryOptions);
-        }
-
+        activeCategory = value === "income" ? IncomeSubCategoryOptions : ExpenseSubCategoryOptions;
+        setSelectedCategory(value);
     };
 
-    console.log("After",activeCategory.toLocaleString())
-
-    const onSubmit = async (values: z.infer<typeof CustomerFormValidation>) => {
+    const onSubmit = async (values) => {
         setIsLoading(true);
-
         try {
             const customer = {
                 userId: user.$id,
-                name: values.name,
-                email: values.email,
-                phone: values.phone,
+                ...values,
                 birthDate: new Date(values.birthDate),
-                gender: values.gender,
-                address: values.address,
-                occupation: values.occupation,
-                emergencyContactName: values.emergencyContactName,
-                emergencyContactNumber: values.emergencyContactNumber,
-                accountProviders: values.accountProviders,
-                savingAmount: values.savingAmount,
-                debt: values.debt,
-                income: values.income,
-                description: values.description,
-                subscriptionInformation: values.subscriptionInformation,
-                identificationType: values.identificationType,
-                identificationNumber: values.identificationNumber,
-                identificationDocument: values.identificationDocument ? formData : undefined,
-                financialAdviceConsent: values.financialAdviceConsent,
-                dataSharingConsent: values.dataSharingConsent,
-                privacyPolicyConsent: values.privacyPolicyConsent,
-                automatedDecisionConsent: values.automatedDecisionConsent,
             };
-
-            console.log("Hello");
             console.log(customer);
             if (customer) {
                 router.replace(`/customer/${123}/success`);
@@ -108,23 +71,24 @@ const TransactionForm = () => {
         } catch (error) {
             console.error(error);
         }
-
         setIsLoading(false);
     };
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 space-y-12">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 space-y-12 bg-white shadow-lg rounded-lg p-8">
                 <section className="space-y-4">
-                    <h1 className="header">Welcome 👋</h1>
-                    <p className="text-dark-700">Enter your transactions.</p>
+                    <h1 className="text-2xl font-semibold text-gray-800">Welcome 👋</h1>
+                    <p className="text-gray-600">Enter your transactions.</p>
                 </section>
+
                 <CustomFormField
                     fieldType={FormFieldType.TEXTAREA}
                     control={form.control}
                     name="transactionName"
-                    label="Enter the transaction Name"
-                    placeholder="I bought Food"
+                    label="Enter the Transaction Name"
+                    placeholder="I bought food"
+                    className="border rounded-lg shadow-sm focus:ring focus:ring-blue-400"
                 />
 
                 <CustomFormField
@@ -138,17 +102,14 @@ const TransactionForm = () => {
                                 className="flex h-11 gap-6 xl:justify-between"
                                 onValueChange={(value) => {
                                     field.onChange(value);
-                                    setSelectedCategory(value); // Update the selected category
-                                    handleTransactionTypeChange(value)
+                                    handleTransactionTypeChange(value);
                                 }}
-
-
                                 defaultValue={field.value}
                             >
                                 {CategoryOptions.map((option, i) => (
-                                    <div key={option + i} className="radio-group">
-                                        <RadioGroupItem value={option} id={option} />
-                                        <Label htmlFor={option} className="cursor-pointer">
+                                    <div key={option + i} className="flex items-center">
+                                        <RadioGroupItem value={option} id={option} className="mr-2" />
+                                        <Label htmlFor={option} className="cursor-pointer text-gray-700">
                                             {option}
                                         </Label>
                                     </div>
@@ -158,32 +119,23 @@ const TransactionForm = () => {
                     )}
                 />
 
-                {/* Render Select based on selected category */}
+                <CustomFormField
+                    fieldType={FormFieldType.SELECT}
+                    control={form.control}
+                    name="subcategory"
+                    label="Select Subcategory"
+                    renderSkeleton={() => (
+                        <Select className="border rounded-lg shadow-sm focus:ring focus:ring-blue-400">
+                            {activeCategory.map((option, index) => (
+                                <SelectItem key={index} value={option}>
+                                    {option}
+                                </SelectItem>
+                            ))}
+                        </Select>
+                    )}
+                />
 
-                    <CustomFormField
-                        fieldType={FormFieldType.SELECT}
-                        control={form.control}
-                        name="subcategory" // Ensure the name matches your form schema
-                        label="Select Subcategory"
-                        renderSkeleton={() => (
-                            <Select >
-                                {(activeCategory).map((option, index) => (
-                                    <SelectItem  key={index} value={option}>
-                                      {option}
-                                    </SelectItem >
-
-                                ))}
-
-
-                                {/*{(activeCategory).forEach()}*/}
-
-                            </Select>
-                        )}
-                    />
-
-
-
-                <h2>Select Your Account Providers</h2>
+                <h2 className="text-lg font-semibold text-gray-800">Select Your Account Providers</h2>
                 {dummyAccount.map((provider) => (
                     <CustomFormField
                         key={provider}
@@ -191,6 +143,7 @@ const TransactionForm = () => {
                         control={form.control}
                         name={provider}
                         label={provider}
+                        className="text-gray-700"
                     />
                 ))}
 
@@ -198,9 +151,10 @@ const TransactionForm = () => {
                     <CustomFormField
                         fieldType={FormFieldType.INPUT}
                         control={form.control}
-                        name="transactionAmount" // Corrected name for consistency
-                        label="Transaction Or Expense Amount"
-                        placeholder="500 000"
+                        name="transactionAmount"
+                        label="Transaction or Expense Amount"
+                        placeholder="500,000"
+                        className="border rounded-lg shadow-sm focus:ring focus:ring-blue-400"
                     />
 
                     <CustomFormField
@@ -208,11 +162,44 @@ const TransactionForm = () => {
                         control={form.control}
                         name="transactionDescription"
                         label="Describe the transaction you just made"
-                        placeholder="I sent money from mama Mboga / I received my salary"
+                        placeholder="I sent money to Mama Mboga / I received my salary"
+                        className="border rounded-lg shadow-sm focus:ring focus:ring-blue-400"
                     />
                 </div>
 
-                <SubmitButton isLoading={isLoading}>Submit and Continue</SubmitButton>
+                <TableContainer component={Paper} sx={{ mb: 4, boxShadow: 3 }}>
+                    <Table>
+                        <TableHead sx={{ backgroundColor: '#1976d2' }}>
+                            <TableRow>
+                                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Product Name</TableCell>
+                                <TableCell sx={{ color: 'white', fontWeight: 'bold' }} align="right">Price (USD)</TableCell>
+                                <TableCell sx={{ color: 'white', fontWeight: 'bold' }} align="right">Quantity</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        {/*<TableBody>*/}
+                        {/*    {inventoryData.map((product, index) => (*/}
+                        {/*        <TableRow*/}
+                        {/*            key={index}*/}
+                        {/*            sx={{*/}
+                        {/*                '&:nth-of-type(odd)': { backgroundColor: '#f0f8ff' },*/}
+                        {/*                '&:hover': { backgroundColor: '#e0f7fa' },*/}
+                        {/*            }}*/}
+                        {/*        >*/}
+                        {/*            <TableCell>{product.name}</TableCell>*/}
+                        {/*            <TableCell align="right">${product.price}</TableCell>*/}
+                        {/*            <TableCell align="right">{product.quantity}</TableCell>*/}
+                        {/*        </TableRow>*/}
+                        {/*    ))}*/}
+                        {/*</TableBody>*/}
+                    </Table>
+                </TableContainer>
+
+                <SubmitButton
+                    isLoading={isLoading}
+                    className="w-full mt-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200"
+                >
+                    Submit and Continue
+                </SubmitButton>
             </form>
         </Form>
     );

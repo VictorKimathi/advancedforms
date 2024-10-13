@@ -10,7 +10,7 @@ export const sidebarLinks = [
 
     {
         imgURL:"/icons/dollar-circle.svg",
-        route:"/customer/123/dashboard/transaction",
+        route:"/customer/123/transactions",
         label:"Enter Transactions"
     },
     {
@@ -66,18 +66,7 @@ export const accountProviders = [
     "Apple Pay",
     "Samsung Pay",
     "Visa",
-    "MasterCard",
-    "Chase",
-    "Bank of America",
-    "Wells Fargo",
-    "HSBC",
-    "Barclays",
-    "CitiBank",
-    "Deutsche Bank",
-    "MetaMask",
-    "Coinbase Wallet",
-    "Trust Wallet",
-    "Binance Wallet",
+
 ];
 
 
@@ -89,32 +78,15 @@ export const dummyAccount = [
     "Binance Wallet",
 ]
 
-
-
 export const CustomerFormDefaultValues = {
-    name: "",
+    username: "",
     email: "",
     phone: "",
     birthDate: new Date(Date.now()),
-    gender: "Male" as Gender,
-    address: "",
+    gender: "Male", // Ensure this value matches one of your radio group options
     occupation: "",
-    emergencyContactName: "",
-    emergencyContactNumber: "",
-    accountProviders: [],
-    savingAmount: "",
-    debt: "",
-    income: "",
-    description: "",
-    subscriptionInformation: "",
-    identificationType: "Birth Certificate",
-    identificationNumber: "",
-    identificationDocument: [],
-    financialAdviceConsent: false,
-    dataSharingConsent: false,
-    privacyPolicyConsent: false,
-    automatedDecisionConsent: false,
 };
+
 
 export const PatientFormDefaultValues = {
     firstName: "",

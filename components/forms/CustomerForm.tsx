@@ -5,19 +5,19 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
+// import Button from "@/components/ui/Button";
 import { Form, FormControl } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { SelectItem } from "@/components/ui/select";
 import { accountProviders } from "@/constants";
 import { GenderOptions, CustomerFormDefaultValues } from "@/constants";
-import { CustomerFormValidation } from "@/lib/vallidation";
+import { CustomerFormValidation } from "@/lib/validation";
 
 import "react-datepicker/dist/react-datepicker.css";
 import "react-phone-number-input/style.css";
 import CustomFormField, { FormFieldType } from "../CustomFormField";
 import SubmitButton from "../SubmitButton";
+import {Button} from "@/components/ui/button";
 
 const RegisterForm = ({ user }: { user: User }) => {
     const router = useRouter();
@@ -25,71 +25,53 @@ const RegisterForm = ({ user }: { user: User }) => {
 
     const form = useForm<z.infer<typeof CustomerFormValidation>>({
         resolver: zodResolver(CustomerFormValidation),
-        defaultValues: {
-            ...CustomerFormDefaultValues,
-            name: user.name,
-            email: user.email,
-            phone: user.phone,
-        },
+        defaultValues: CustomerFormDefaultValues
     });
 
     const onSubmit = async (values: z.infer<typeof CustomerFormValidation>) => {
+        console.log("On submit is called")
         setIsLoading(true);
 
+        const customer = {
+            username: values.username,
+            email: values.email,
+            password: values.password,
+            profile: {
+                phone_number: values.phone, // Ensure this matches the form structure
+                gender: values.gender,
+                occupation: values.occupation,
+                date_of_birth: values.birthDate?.toISOString().split("T")[0] || null,
+            },
+        };
 
-
-
+        console.log("Customer", customer);
 
         try {
-            const customer = {
-                userId: user.$id,
-                name: values.name,
-                email: values.email,
-                phone: values.phone,
-                birthDate: new Date(values.birthDate),
-                gender: values.gender,
-                address: values.address,
-                occupation: values.occupation,
-                emergencyContactName: values.emergencyContactName,
-                emergencyContactNumber: values.emergencyContactNumber,
-                accountProviders: values.accountProviders,
-                savingAmount: values.savingAmount,
-                debt: values.debt,
-                income: values.income,
-                description: values.description,
-                subscriptionInformation: values.subscriptionInformation,
-                identificationType: values.identificationType,
-                identificationNumber: values.identificationNumber,
-                identificationDocument: values.identificationDocument
-                    ? formData
-                    : undefined,
-                financialAdviceConsent: values.financialAdviceConsent,
-                dataSharingConsent: values.dataSharingConsent,
-                privacyPolicyConsent: values.privacyPolicyConsent,
-                automatedDecisionConsent: values.automatedDecisionConsent,
-            };
+            const response = await fetch("http://127.0.0.1:8000/api/register/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(customer),
+            });
 
-            // const newCustomer = await registerCustomer(customer);
-            console.log("Hello")
-console.log(customer);
-if(customer){
+            if (!response.ok) {
+                throw new Error("Registration failed!");
+            }
 
-                router.replace(`/customer/${123}/success`);
-}
-
+            const result = await response.json();
+            router.replace(`/customer/${result.userId}/success`);
         } catch (error) {
-            console.error(error);
+            console.error("Error during registration:", error);
+        } finally {
+            setIsLoading(false);
         }
-
-        setIsLoading(false);
     };
 
+    // @ts-ignore
     return (
         <Form {...form}>
-            <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="flex-1 space-y-12"
-            >
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 space-y-12">
                 <section className="space-y-4">
                     <h1 className="header">Welcome 👋</h1>
                     <p className="text-dark-700">Complete your personal profile.</p>
@@ -103,31 +85,36 @@ if(customer){
                     <CustomFormField
                         fieldType={FormFieldType.INPUT}
                         control={form.control}
-                        name="name"
+                        name="username"
                         placeholder="John Doe"
                         iconSrc="/assets/icons/user.svg"
                         iconAlt="user"
                     />
-
-                    <div className="flex flex-col gap-6 xl:flex-row">
-                        <CustomFormField
-                            fieldType={FormFieldType.INPUT}
-                            control={form.control}
-                            name="email"
-                            label="Email address"
-                            placeholder="johndoe@gmail.com"
-                            iconSrc="/assets/icons/email.svg"
-                            iconAlt="email"
-                        />
-
-                        <CustomFormField
-                            fieldType={FormFieldType.PHONE_INPUT}
-                            control={form.control}
-                            name="phone"
-                            label="Phone Number"
-                            placeholder="(555) 123-4567"
-                        />
-                    </div>
+                    <CustomFormField
+                        fieldType={FormFieldType.INPUT}
+                        control={form.control}
+                        name="email"
+                        label="Email address"
+                        placeholder="johndoe@gmail.com"
+                        iconSrc="/assets/icons/email.svg"
+                        iconAlt="email"
+                    />
+                    <CustomFormField
+                        fieldType={FormFieldType.INPUT}
+                        control={form.control}
+                        name="password"
+                        label="Password"
+                        placeholder="password"
+                        iconSrc="/assets/icons/lock.svg"
+                        iconAlt="lock"
+                    />
+                    <CustomFormField
+                        fieldType={FormFieldType.PHONE_INPUT}
+                        control={form.control}
+                        name="phone"
+                        label="Phone Number"
+                        placeholder="(555) 123-4567"
+                    />
 
                     <div className="flex flex-col gap-6 xl:flex-row">
                         <CustomFormField
@@ -147,11 +134,11 @@ if(customer){
                                     <RadioGroup
                                         className="flex h-11 gap-6 xl:justify-between"
                                         onValueChange={field.onChange}
-                                        defaultValue={field.value}
+                                        value={field.value || "Male"} // Use a default value if field.value is undefined
                                     >
                                         {GenderOptions.map((option, i) => (
                                             <div key={option + i} className="radio-group">
-                                                <RadioGroupItem value={option} id={option}/>
+                                                <RadioGroupItem value={option} id={option} />
                                                 <Label htmlFor={option} className="cursor-pointer">
                                                     {option}
                                                 </Label>
@@ -161,139 +148,19 @@ if(customer){
                                 </FormControl>
                             )}
                         />
-                    </div>
 
-                    <div className="flex flex-col gap-6 xl:flex-row">
-                        <CustomFormField
-                            fieldType={FormFieldType.INPUT}
-                            control={form.control}
-                            name="address"
-                            label="Address"
-                            placeholder="14 street, New York, NY - 5101"
-                        />
-
-                        <CustomFormField
-                            fieldType={FormFieldType.INPUT}
-                            control={form.control}
-                            name="occupation"
-                            label="Occupation"
-                            placeholder="Software Engineer"
-                        />
-                    </div>
-
-                    <div className="flex flex-col gap-6 xl:flex-row">
-                        <CustomFormField
-                            fieldType={FormFieldType.INPUT}
-                            control={form.control}
-                            name="emergencyContactName"
-                            label="Emergency contact name"
-                            placeholder="Guardian's name"
-                        />
-
-                        <CustomFormField
-                            fieldType={FormFieldType.PHONE_INPUT}
-                            control={form.control}
-                            name="emergencyContactNumber"
-                            label="Emergency contact number"
-                            placeholder="(555) 123-4567"
-                        />
-                    </div>
-                </section>
-
-                <section className="space-y-6">
-                    <div className="mb-9 space-y-1">
-                        <h2 className="sub-header">Financial Information</h2>
-                    </div>
-
-                    <h2>Select Your Account Providers</h2>
-                    {accountProviders.map((provider) => (
-                        <CustomFormField
-                            key={provider}
-                            fieldType={FormFieldType.CHECKBOX}
-                            control={form.control}
-                            name={provider}
-                            label={provider}
-                        />
-                    ))}
-
-                    <div className="flex flex-col gap-6 xl:flex-row">
-                        <CustomFormField
-                            fieldType={FormFieldType.INPUT}
-                            control={form.control}
-                            name="savingAmount"
-                            label="Saving Amount (if any)"
-                            placeholder="500 000"
-                        />
-
-                        <CustomFormField
-                            fieldType={FormFieldType.INPUT}
-                            control={form.control}
-                            name="debt"
-                            label="Enter Debt Balance (if any)"
-                            placeholder="100 000"
-                        />
-
-                        <CustomFormField
-                            fieldType={FormFieldType.INPUT}
-                            control={form.control}
-                            name="income"
-                            label="Enter any income (if any)"
-                            placeholder="100 000"
-                        />
-                    </div>
-
-                    <div className="flex flex-col gap-6 xl:flex-row">
-                        <CustomFormField
-                            fieldType={FormFieldType.TEXTAREA}
-                            control={form.control}
-                            name="description"
-                            label="Describe yourself and your expectations with this platform"
-                            placeholder="I want to have better insights from my money"
-                        />
-
-                        <CustomFormField
-                            fieldType={FormFieldType.TEXTAREA}
-                            control={form.control}
-                            name="subscriptionInformation"
-                            label="Have you enrolled in any subscriptions? If yes, tell us about it"
-                            placeholder="YouTube Premium"
-                        />
-                    </div>
-                </section>
-
-                <section className="space-y-6">
-                    <div className="mb-9 space-y-1">
-                        <h2 className="sub-header">Consent and Privacy</h2>
                     </div>
 
                     <CustomFormField
-                        fieldType={FormFieldType.CHECKBOX}
+                        fieldType={FormFieldType.INPUT}
                         control={form.control}
-                        name="financialAdviceConsent"
-                        label="I consent to receive financial advice and recommendations based on my provided information."
-                    />
-
-                    <CustomFormField
-                        fieldType={FormFieldType.CHECKBOX}
-                        control={form.control}
-                        name="dataSharingConsent"
-                        label="I consent to the sharing of my financial information with authorized third parties for the purpose of delivering personalized advice."
-                    />
-                    <CustomFormField
-                        fieldType={FormFieldType.CHECKBOX}
-                        control={form.control}
-                        name="privacyPolicyConsent"
-                        label="I acknowledge that I have reviewed and agree to the privacy policy and terms of service."
-                    />
-
-                    <CustomFormField
-                        fieldType={FormFieldType.CHECKBOX}
-                        control={form.control}
-                        name="automatedDecisionConsent"
-                        label="I consent to the use of automated decision-making for generating financial insights and recommendations."
+                        name="occupation"
+                        label="Occupation"
+                        placeholder="Software Engineer"
                     />
                 </section>
-
+                {/*<Button*/}
+                {/*    type="submit">SUbmit</Button>*/}
                 <SubmitButton isLoading={isLoading}>Submit and Continue</SubmitButton>
             </form>
         </Form>

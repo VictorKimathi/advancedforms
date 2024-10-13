@@ -14,7 +14,7 @@ export const UserFormValidation = z.object({
 
 
 export const CustomerFormValidation = z.object({
-    name: z
+    username: z
         .string()
         .min(2, "Name must be at least 2 characters")
         .max(50, "Name must be at most 50 characters"),
@@ -32,6 +32,18 @@ export const CustomerFormValidation = z.object({
 
 });
 
+
+
+
+
+// export const CustomerFormDefaultValues = {
+//     username: "",
+//     email: "",
+//     phone: "",
+//     birthDate: new Date(Date.now()),
+//     gender: "Male", // Ensure this value matches one of your radio group options
+//     occupation: "",
+// };
 
 export const PatientFormValidation = z.object({
     name: z

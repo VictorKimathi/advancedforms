@@ -20,8 +20,8 @@ import SubmitButton from "../SubmitButton";
 import {Button} from "@/components/ui/button";
 
 const RegisterForm = ({ user }: { user: User }) => {
-    const router = useRouter();
-    const [isLoading, setIsLoading] = useState(false);
+const router = useRouter();
+const [isLoading, setIsLoading] = useState(false);
 
     const form = useForm<z.infer<typeof CustomerFormValidation>>({
         resolver: zodResolver(CustomerFormValidation),
@@ -30,19 +30,68 @@ const RegisterForm = ({ user }: { user: User }) => {
 
     const onSubmit = async (values: z.infer<typeof CustomerFormValidation>) => {
         console.log("On submit is called");
+        // try {
+        //     setIsLoading(true);
+        //
+        //     const customer = {
+        //         username: values.username,
+        //         email: values.email,
+        //         password: values.password,
+        //         profile: {
+        //             phone_number: values.phone,
+        //             gender: values.gender,
+        //             occupation: values.occupation,
+        //             date_of_birth: values.birthDate?.toISOString().split("T")[0] || null,
+        //         },
+        //     };
+        //
+        //     const response = await fetch('http://127.0.0.1:8000/api/register/', {
+        //         method: 'POST',
+        //         body: JSON.stringify(customer),
+        //         headers: {
+        //             'Content-Type': 'application/json',
+        //         },
+        //     });
+        //
+        //     const responseText = await response.text(); // Read as text first
+        //     console.log('Raw response:', responseText); // Log the raw response
+        //
+        //     // Check if the response is JSON
+        //     let data;
+        //     try {
+        //         data = JSON.parse(responseText); // Try to parse as JSON
+        //     } catch (parseError) {
+        //         console.error('Failed to parse response as JSON:', responseText);
+        //         throw new Error('Failed to parse response as JSON.');
+        //     }
+        //
+        //     if (!response.ok) {
+        //         console.error('Registration failed:', data);
+        //         throw new Error(data.message || 'Registration failed');
+        //     }
+        //
+        //     // Handle successful registration
+        //     router.replace(`/customer/${data.userId}/success`);
+        // } catch (error) {
+        //     console.error("Error during registration:", error);
+        // } finally {
+        //     setIsLoading(false);
+        // }
+
+
 
         try {
             const response = await fetch('http://127.0.0.1:8000/api/register/', {
                 method: 'POST',
                 body: JSON.stringify({
-                    username: values.username, // Use form value
-                    email: values.email,       // Use form value
-                    password: values.password,  // Use form value
+                    username: "victor",
+                    email: "victcodes9532@gmail.com",
+                    password: "secuePassword123",
                     profile: {
-                        phone_number: values.phone, // Use form value
-                        gender: values.gender,       // Use form value
-                        occupation: values.occupation, // Use form value
-                        date_of_birth: values.birthDate // Use form value
+                        phone_number: "0723456781",
+                        gender: "male",
+                        occupation: "software_dev",
+                        date_of_birth: "1995-05-15"
                     }
                 }),
                 headers: {
@@ -52,14 +101,15 @@ const RegisterForm = ({ user }: { user: User }) => {
             const data = await response.json();
             if (response.ok) {
                 console.log(data.message); // Expect "User registered successfully."
-                router.replace(`/customer/${data.userId}/success`);
             } else {
                 console.error('Error:', data);
             }
         } catch (error) {
             console.error('Failed to parse response as JSON:', error);
         }
+
     };
+
 
 
     // @ts-ignore

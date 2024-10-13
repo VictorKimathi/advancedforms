@@ -30,7 +30,13 @@ const RegisterForm = ({ user }: { user: User }) => {
 
     const onSubmit = async (values: z.infer<typeof CustomerFormValidation>) => {
         console.log("On submit is called");
-
+console.log(values.username)
+        console.log(values.password)
+        console.log(values.phone)
+        console.log(values.birthDate)
+        console.log(values.email)
+        console.log(values.gender)
+        console.log(values.occupation)
         try {
             const response = await fetch('http://127.0.0.1:8000/api/register/', {
                 method: 'POST',
@@ -39,10 +45,10 @@ const RegisterForm = ({ user }: { user: User }) => {
                     email: values.email,       // Use form value
                     password: values.password,  // Use form value
                     profile: {
-                        phone_number: values.phone, // Use form value
-                        gender: values.gender,       // Use form value
-                        occupation: values.occupation, // Use form value
-                        date_of_birth: values.birthDate // Use form value
+                        phone_number: "07267456781", // Use form value
+                        gender: "male",       // Use form value
+                        occupation: "", // Use form value
+                        date_of_birth: "1995-05-15" // Use form value
                     }
                 }),
                 headers: {

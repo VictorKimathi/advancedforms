@@ -60,7 +60,7 @@ curl -X POST http://localhost:8000/api/debts/ \
 }'
 ```
 **Output:**
-```json
+```json[work.md](work.md)
 {"id":7,"amount":"5000.00"}
 ```
 

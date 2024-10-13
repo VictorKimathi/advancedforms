@@ -85,6 +85,7 @@ export const CustomerFormDefaultValues = {
     birthDate: new Date(Date.now()),
     gender: "Male", // Ensure this value matches one of your radio group options
     occupation: "",
+    password:""
 };
 
 

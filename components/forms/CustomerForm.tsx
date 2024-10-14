@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 // import Button from "@/components/ui/Button";
+import { Button } from "@/components/ui/button";
 import { Form, FormControl } from "@/components/ui/form";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -15,9 +16,11 @@ import { CustomerFormValidation } from "@/lib/validation";
 
 import "react-datepicker/dist/react-datepicker.css";
 import "react-phone-number-input/style.css";
-import CustomFormField, { FormFieldType } from "../CustomFormField";
+// import CustomFormField, { FormFieldType } from "../../components/CustomFormField";
 import SubmitButton from "../SubmitButton";
-import {Button} from "@/components/ui/button";
+import CustomFormField, { FormFieldType } from "@/components/CustomFormField";
+
+// import {Button} from "@/components/ui/button";
 
 const RegisterForm = ({ user }: { user: User }) => {
     const router = useRouter();
@@ -41,14 +44,14 @@ console.log(values.username)
             const response = await fetch('http://127.0.0.1:8000/api/register/', {
                 method: 'POST',
                 body: JSON.stringify({
-                    username: values.username, // Use form value
-                    email: values.email,       // Use form value
-                    password: values.password,  // Use form value
+                    username: values.username,
+                    email: values.email,
+                    password: "secuePassword123",
                     profile: {
-                        phone_number: "07267456781", // Use form value
-                        gender: "male",       // Use form value
-                        occupation: "", // Use form value
-                        date_of_birth: "1995-05-15" // Use form value
+                        phone_number: "0798321656",
+                        gender: "male",
+                        occupation: "software_dev",
+                        date_of_birth: "1995-05-15"
                     }
                 }),
                 headers: {
@@ -58,7 +61,7 @@ console.log(values.username)
             const data = await response.json();
             if (response.ok) {
                 console.log(data.message); // Expect "User registered successfully."
-                router.replace(`/customer/${data.userId}/success`);
+                router.replace(`/customer/${data.userId}/dashboard/home`);
             } else {
                 console.error('Error:', data);
             }
@@ -161,6 +164,10 @@ console.log(values.username)
                 </section>
                 {/*<Button*/}
                 {/*    type="submit">SUbmit</Button>*/}
+
+                <Button type="submit" disabled={isLoading}>
+                    {isLoading ? "Submitting..." : "Submit and Continue"}
+                </Button>
                 <SubmitButton isLoading={isLoading}>Submit and Continue</SubmitButton>
             </form>
         </Form>

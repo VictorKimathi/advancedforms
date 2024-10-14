@@ -1,208 +1,197 @@
-"use client";
+import React, { useState } from "react";
+import "./styles.css";
 
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
-} from '@mui/material';
+function App() {
+    const [transactionType, setTransactionType] = useState("income"); // Default to 'income'
+    const [paymentMethod, setPaymentMethod] = useState("");
+    const [amount, setAmount] = useState("");
+    const [category, setCategory] = useState(""); // Ensure this is not empty
+    const [transactionDetails, setTransactionDetails] = useState(null);
+    const [transactionId, setTransactionId] = useState("");
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-import { Form, FormControl } from "@/components/ui/form";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Select } from "@/components/ui/select";
-import { SelectItem } from "@/components/ui/select";
-import { dummyAccount } from "@/constants";
-import { CategoryOptions, IncomeSubCategoryOptions, ExpenseSubCategoryOptions, CustomerFormDefaultValues } from "@/constants";
-import { CustomerFormValidation } from "@/lib/validation";
-
-import "react-datepicker/dist/react-datepicker.css";
-import "react-phone-number-input/style.css";
-import CustomFormField, { FormFieldType } from "@/components/CustomFormField";
-import SubmitButton from "@/components/SubmitButton";
-
-const TransactionForm = () => {
-    let activeCategory = IncomeSubCategoryOptions;
-    const user = {
-        name: "victor Kimathi",
-        email: "victorcodes9532@gmail.com",
-        phone: "0717382028"
-    };
-    const router = useRouter();
-    const [isLoading, setIsLoading] = useState(false);
-    const [selectedCategory, setSelectedCategory] = useState("income");
-
-    const form = useForm<z.infer<typeof CustomerFormValidation>>({
-        resolver: zodResolver(CustomerFormValidation),
-        defaultValues: {
-            ...CustomerFormDefaultValues,
-            name: user.name,
-            email: user.email,
-            phone: user.phone,
-        },
-    });
-
-    const handleTransactionTypeChange = (value) => {
-        activeCategory = value === "income" ? IncomeSubCategoryOptions : ExpenseSubCategoryOptions;
-        setSelectedCategory(value);
-    };
-
-    const onSubmit = async (values) => {
-        setIsLoading(true);
-        try {
-            const customer = {
-                userId: user.$id,
-                ...values,
-                birthDate: new Date(values.birthDate),
-            };
-            console.log(customer);
-            if (customer) {
-                router.replace(`/customer/${123}/success`);
-            }
-        } catch (error) {
-            console.error(error);
+        // Validate amount
+        if (!amount || isNaN(amount) || amount <= 0) {
+            alert("Please enter a valid amount.");
+            return;
         }
-        setIsLoading(false);
+
+        const data = {
+            amount: parseFloat(amount),
+            transaction_type: transactionType, // This should have a valid value
+            payment_method: paymentMethod,
+            category: category || "other", // Default to 'other' if empty
+        };
+
+        console.log("Submitting transaction with the following data:", JSON.stringify(data));
+
+        try {
+            const response = await fetch("http://localhost:8000/api/transactions/", {
+                method: "POST",
+                headers: {
+                    "Authorization": "Token 2b813dfedde303e59b23667584b792f2d2767248",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            });
+
+            // Log the response status and body
+            console.log("Response Status:", response.status);
+            const responseBody = await response.text();
+            console.log("Response Body:", responseBody);
+
+            if (!response.ok) {
+                try {
+                    const errorResponse = JSON.parse(responseBody);
+                    console.error("Error Response Data:", errorResponse);
+                } catch (jsonError) {
+                    console.error("Failed to parse error response:", jsonError);
+                }
+                throw new Error("Something went wrong with the request");
+            }
+
+            const result = await response.json();
+            console.log("Transaction created successfully:", result);
+            handleReset();
+        } catch (error) {
+            console.error("Error submitting transaction:", error);
+        }
+    };
+
+    const handleReset = () => {
+        setTransactionType("income"); // Reset to default value
+        setPaymentMethod("");
+        setAmount("");
+        setCategory(""); // Reset to empty
+    };
+
+    const handleFetchTransaction = async () => {
+        try {
+            const response = await fetch(`http://localhost:8000/api/transactions/${transactionId}/`, {
+                method: "GET",
+                headers: {
+                    "Authorization": "Token 2b813dfedde303e59b23667584b792f2d2767248",
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch transaction details");
+            }
+
+            const data = await response.json();
+            console.log("Fetched transaction details:", data);
+            setTransactionDetails(data); // Update state with fetched details
+        } catch (error) {
+            console.error("Error fetching transaction details:", error);
+        }
     };
 
     return (
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 space-y-12 bg-white shadow-lg rounded-lg p-8">
-                <section className="space-y-4">
-                    <h1 className="text-2xl font-semibold text-gray-800">Welcome 👋</h1>
-                    <p className="text-gray-600">Enter your transactions.</p>
-                </section>
+        <div className="App">
+            <div className="form-container">
+                <h1>Transaction Form</h1>
+                <fieldset>
+                    <form onSubmit={handleSubmit}>
 
-                <CustomFormField
-                    fieldType={FormFieldType.TEXTAREA}
-                    control={form.control}
-                    name="transactionName"
-                    label="Enter the Transaction Name"
-                    placeholder="I bought food"
-                    className="border rounded-lg shadow-sm focus:ring focus:ring-blue-400"
-                />
+                        <label htmlFor="category">Category</label>
+                        <input
+                            type="text"
+                            id="category"
+                            value={category}
+                            onChange={(e) => setCategory(e.target.value)}
+                            placeholder="Enter Category"
+                        />
 
-                <CustomFormField
-                    fieldType={FormFieldType.SKELETON}
-                    control={form.control}
-                    name="category"
-                    label="Income/Expense"
-                    renderSkeleton={(field) => (
-                        <FormControl>
-                            <RadioGroup
-                                className="flex h-11 gap-6 xl:justify-between"
-                                onValueChange={(value) => {
-                                    field.onChange(value);
-                                    handleTransactionTypeChange(value);
-                                }}
-                                defaultValue={field.value}
-                            >
-                                {CategoryOptions.map((option, i) => (
-                                    <div key={option + i} className="flex items-center">
-                                        <RadioGroupItem value={option} id={option} className="mr-2" />
-                                        <Label htmlFor={option} className="cursor-pointer text-gray-700">
-                                            {option}
-                                        </Label>
-                                    </div>
-                                ))}
-                            </RadioGroup>
-                        </FormControl>
+                        <label htmlFor="paymentMethod">Payment Method*</label>
+                        <input
+                            type="text"
+                            id="paymentMethod"
+                            value={paymentMethod}
+                            onChange={(e) => setPaymentMethod(e.target.value)}
+                            placeholder="Enter Payment Method"
+                            required
+                        />
+
+                        <label htmlFor="transaction_type">Transaction Type*</label>
+                        <select
+                            id="transaction_type"
+                            value={transactionType}
+                            onChange={(e) => setTransactionType(e.target.value)}
+                            required
+                        >
+                            <option value="income">Income</option>
+                            <option value="expense">Expense</option>
+                        </select>
+
+                        <label htmlFor="amount">Amount*</label>
+                        <input
+                            type="number"
+                            id="amount"
+                            value={amount}
+                            onChange={(e) => setAmount(e.target.value)}
+                            placeholder="Enter Amount"
+                            required
+                        />
+
+                        <button type="button" onClick={handleReset}>
+                            Reset
+                        </button>
+                        <button type="submit">
+                            Submit
+                        </button>
+                    </form>
+                </fieldset>
+
+                <fieldset>
+                    <h2>Fetch Transaction Details</h2>
+                    <input
+                        type="number"
+                        placeholder="Enter Transaction ID"
+                        value={transactionId}
+                        onChange={(e) => setTransactionId(e.target.value)}
+                    />
+                    <button onClick={handleFetchTransaction}>
+                        Fetch
+                    </button>
+
+                    {transactionDetails && (
+                        <div>
+                            <h3>Transaction Details:</h3>
+                            <pre>{JSON.stringify(transactionDetails, null, 2)}</pre>
+                            <div className="transaction-table text-gray-950">
+                                <h3>Transaction Details</h3>
+                                <table>
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>User</th>
+                                        <th>Amount</th>
+                                        <th>Transaction Type</th>
+                                        <th>Payment Method</th>
+                                        <th>Category</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>{transactionDetails.id}</td>
+                                        <td>{transactionDetails.user}</td>
+                                        <td>{transactionDetails.amount}</td>
+                                        <td>{transactionDetails.transaction_type}</td>
+                                        <td>{transactionDetails.payment_method}</td>
+                                        <td>{transactionDetails.category}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     )}
-                />
-
-                <CustomFormField
-                    fieldType={FormFieldType.SELECT}
-                    control={form.control}
-                    name="subcategory"
-                    label="Select Subcategory"
-                    renderSkeleton={() => (
-                        <Select className="border rounded-lg shadow-sm focus:ring focus:ring-blue-400">
-                            {activeCategory.map((option, index) => (
-                                <SelectItem key={index} value={option}>
-                                    {option}
-                                </SelectItem>
-                            ))}
-                        </Select>
-                    )}
-                />
-
-                <h2 className="text-lg font-semibold text-gray-800">Select Your Account Providers</h2>
-                {dummyAccount.map((provider) => (
-                    <CustomFormField
-                        key={provider}
-                        fieldType={FormFieldType.CHECKBOX}
-                        control={form.control}
-                        name={provider}
-                        label={provider}
-                        className="text-gray-700"
-                    />
-                ))}
-
-                <div className="flex flex-col gap-6 xl:flex-row">
-                    <CustomFormField
-                        fieldType={FormFieldType.INPUT}
-                        control={form.control}
-                        name="transactionAmount"
-                        label="Transaction or Expense Amount"
-                        placeholder="500,000"
-                        className="border rounded-lg shadow-sm focus:ring focus:ring-blue-400"
-                    />
-
-                    <CustomFormField
-                        fieldType={FormFieldType.TEXTAREA}
-                        control={form.control}
-                        name="transactionDescription"
-                        label="Describe the transaction you just made"
-                        placeholder="I sent money to Mama Mboga / I received my salary"
-                        className="border rounded-lg shadow-sm focus:ring focus:ring-blue-400"
-                    />
-                </div>
-
-                <TableContainer component={Paper} sx={{ mb: 4, boxShadow: 3 }}>
-                    <Table>
-                        <TableHead sx={{ backgroundColor: '#1976d2' }}>
-                            <TableRow>
-                                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Product Name</TableCell>
-                                <TableCell sx={{ color: 'white', fontWeight: 'bold' }} align="right">Price (USD)</TableCell>
-                                <TableCell sx={{ color: 'white', fontWeight: 'bold' }} align="right">Quantity</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        {/*<TableBody>*/}
-                        {/*    {inventoryData.map((product, index) => (*/}
-                        {/*        <TableRow*/}
-                        {/*            key={index}*/}
-                        {/*            sx={{*/}
-                        {/*                '&:nth-of-type(odd)': { backgroundColor: '#f0f8ff' },*/}
-                        {/*                '&:hover': { backgroundColor: '#e0f7fa' },*/}
-                        {/*            }}*/}
-                        {/*        >*/}
-                        {/*            <TableCell>{product.name}</TableCell>*/}
-                        {/*            <TableCell align="right">${product.price}</TableCell>*/}
-                        {/*            <TableCell align="right">{product.quantity}</TableCell>*/}
-                        {/*        </TableRow>*/}
-                        {/*    ))}*/}
-                        {/*</TableBody>*/}
-                    </Table>
-                </TableContainer>
-
-                <SubmitButton
-                    isLoading={isLoading}
-                    className="w-full mt-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200"
-                >
-                    Submit and Continue
-                </SubmitButton>
-            </form>
-        </Form>
+                </fieldset>
+            </div>
+        </div>
     );
-};
+}
 
-export default TransactionForm;
+export default App;

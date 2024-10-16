@@ -4,10 +4,13 @@ import React, { useEffect, useState } from 'react';
 const Transactions = () => {
     const [totalDebt, setTotalDebt] = useState(null);
     const [allTransactions, setAllTransactions] = useState([]); // State for all transactions
+    const [financialGoals, setFinancialGoals] = useState([]); // State for financial goals
+    const [financialSummary, setFinancialSummary] = useState(null); // State for financial summary
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [context, setContext] = useState({}); // New state for context
 
-    // Fetch total debt and all transactions
+    // Fetch total debt, all transactions, financial goals, and financial summary
     useEffect(() => {
         const fetchTotalDebt = async () => {
             try {
@@ -46,22 +49,87 @@ const Transactions = () => {
                 }
 
                 const data = await response.json();
-                console.log("Total transactions :", data);
+                console.log("Total transactions:", data);
                 setAllTransactions(data);
-                setLoading(false);
             } catch (err) {
                 setError(err.message);
-                setLoading(false);
             }
         };
 
-        fetchTotalDebt();
-        fetchAllTransactions();
+        const fetchFinancialGoals = async () => {
+            try {
+                const response = await fetch(`http://localhost:8000/api/financial-goals/`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": "Token dee6d4ab110568b3feae114768f6e12c97a4ade0",
+                        "Content-Type": "application/json",
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch financial goals");
+                }
+
+                const data = await response.json();
+                console.log("Financial Goals:", data);
+                setFinancialGoals(data);
+            } catch (err) {
+                setError(err.message);
+            }
+        };
+
+        // Fetch Financial Summary
+        const fetchFinancialSummary = async () => {
+            try {
+                const response = await fetch(`http://localhost:8000/api/financial-summary/`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": "Token dee6d4ab110568b3feae114768f6e12c97a4ade0",
+                        "Content-Type": "application/json",
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch financial summary");
+                }
+
+                const data = await response.json();
+                console.log("Financial Summary:", data);
+                setFinancialSummary(data);
+            } catch (err) {
+                setError(err.message);
+            }
+        };
+
+        const fetchAllData = async () => {
+            await Promise.all([
+                fetchTotalDebt(),
+                fetchAllTransactions(),
+                fetchFinancialGoals(),
+                fetchFinancialSummary()
+            ]);
+            setLoading(false);
+        };
+
+        fetchAllData();
     }, []);
+
+    // Update context state and log it after all data is fetched
+    useEffect(() => {
+        if (!loading) {
+            setContext({
+                totalDebt,
+                allTransactions,
+                financialGoals,
+                financialSummary
+            });
+            console.log(context); // Log the context after it's updated
+        }
+    }, [loading, totalDebt, allTransactions, financialGoals, financialSummary]); // Dependency array
 
     // Loading and error handling
     if (loading) {
-        return <p className="text-center text-blue-500">Loading transactions...</p>;
+        return <p className="text-center text-blue-500">Loading transactions, financial goals, and summary...</p>;
     }
 
     if (error) {
@@ -70,6 +138,22 @@ const Transactions = () => {
 
     return (
         <div className="max-w-3xl mx-auto p-6">
+            {/* Financial Summary Card */}
+            <div className="bg-blue-50 p-6 rounded-lg shadow-lg mb-6">
+                <h2 className="text-2xl font-semibold text-blue-800 mb-4">Financial Summary</h2>
+                <div className="bg-white p-4 rounded-lg shadow-md">
+                    <p className="text-lg font-medium text-gray-700">
+                        <span className="font-semibold">Total Income:</span> ${financialSummary?.total_income}
+                    </p>
+                    <p className="text-lg font-medium text-gray-700">
+                        <span className="font-semibold">Total Expenses:</span> ${financialSummary?.total_expenses}
+                    </p>
+                    <p className="text-lg font-medium text-gray-700">
+                        <span className="font-semibold">Net Income:</span> ${financialSummary?.net_income}
+                    </p>
+                </div>
+            </div>
+
             {/* Total Debt Card */}
             <div className="bg-blue-50 p-6 rounded-lg shadow-lg mb-6">
                 <h2 className="text-2xl font-semibold text-blue-800 mb-4">Total Debt</h2>
@@ -106,6 +190,24 @@ const Transactions = () => {
                         </p>
                     </div>
                 ))}
+            </div>
+
+            {/* Financial Goals List */}
+            <h1 className="text-2xl font-semibold text-blue-800 mb-4 mt-8">Your Financial Goals</h1>
+            <div>
+                {financialGoals.length === 0 && (
+                    <p className="text-gray-600 text-center">No financial goals found.</p>
+                )}
+                <ul className="space-y-4">
+                    {financialGoals.map((goal) => (
+                        <li key={goal.id} className="bg-white p-4 border border-blue-300 rounded-lg">
+                            <h2 className="font-semibold text-lg text-blue-700">{goal.description}</h2>
+                            <p className="font-semibold text-lg text-blue-700">Amount Needed: {goal.amount_needed}</p>
+                            <p className="font-semibold text-lg text-blue-700">Duration: {goal.duration_weeks} weeks</p>
+                            <p className="font-semibold text-lg text-blue-700">Goal Type: {goal.goal_type}</p>
+                        </li>
+                    ))}
+                </ul>
             </div>
         </div>
     );

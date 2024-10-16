@@ -1,4 +1,5 @@
 // app/layout.tsx or app/layout.js
+
 import Sidebar from "@/components/SideBar";
 import Image from "next/image";
 import { ReactNode } from "react";

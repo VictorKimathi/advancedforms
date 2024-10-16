@@ -5,13 +5,16 @@ import HeaderBox from '@/components/HeaderBox'
 import Recommendation from '@/components/Recommendation';
 import RightSideBar from '@/components/RightSideBar';
 import TotalBalanceBox from '@/components/TotalBalanceBox';
+import FinanceSummary from "@/components/FinanceSummary";
+import DebtSummary from "@/components/DebtSummary";
+import AIAnalysis from "@/components/AIAnalysis";
 
 const Page = ({ searchParams: { id, page } }: SearchParamProps) => {
     const loggedIn = { firstName: "Victor", lastName: "Codes", email: "victorcodes9532@gmail.com" }
     const currentPage = Number(page as string) || 1;
 
     return (
-        <RootLayout>
+        <RootLayout className="mb-4">
             <div className="bg-gray-50 min-h-screen flex flex-col">
                 <header className="flex items-center justify-between bg-white shadow-md px-5 py-3">
                     <h1 className="text-2xl font-bold text-gray-800">Home Page of Our AI App</h1>
@@ -30,7 +33,12 @@ const Page = ({ searchParams: { id, page } }: SearchParamProps) => {
                                 totalBanks={1}
                                 totalCurrentBalance={5000000.351}
                             />
-                            <Recommendation />
+                            <AIAnalysis transactionId={11}/>
+                            {/*<Recommendation />*/}
+                            {/*<FinanceSummary transactionId={11}/>*/}
+{/*<DebtSummary />*/}
+
+
                         </header>
                     </div>
 

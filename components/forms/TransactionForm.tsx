@@ -31,7 +31,7 @@ function App() {
             const response = await fetch("http://localhost:8000/api/transactions/", {
                 method: "POST",
                 headers: {
-                    "Authorization": "Token 2b813dfedde303e59b23667584b792f2d2767248",
+                    "Authorization": "Token dee6d4ab110568b3feae114768f6e12c97a4ade0",
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify(data),
@@ -72,7 +72,7 @@ function App() {
             const response = await fetch(`http://localhost:8000/api/transactions/${transactionId}/`, {
                 method: "GET",
                 headers: {
-                    "Authorization": "Token 2b813dfedde303e59b23667584b792f2d2767248",
+                    "Authorization": "Token dee6d4ab110568b3feae114768f6e12c97a4ade0",
                     "Content-Type": "application/json",
                 },
             });

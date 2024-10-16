@@ -20,10 +20,24 @@ export const sidebarLinks = [
     },
     {
         imgURL:"/icons/dollar-circle.svg",
-        route:"//customer/123/dashboard/hub",
+        route:"/customer/123/dashboard/hub",
         label:"AI Hub"
     },
-
+    {
+        imgURL:"/icons/dollar-circle.svg",
+        route:"/customer/123/debt-management",
+        label:"Debt Management"
+    },
+    {
+        imgURL:"/icons/dollar-circle.svg",
+        route:"/customer/123/goal-management",
+        label:"Goal Management "
+    },
+    {
+        imgURL:"/icons/dollar-circle.svg",
+        route:"/customer/123/profile",
+        label:"User  Profile "
+    },
 
 ];
 

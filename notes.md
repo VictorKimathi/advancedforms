@@ -42,7 +42,7 @@ curl -X POST http://127.0.0.1:8000/api/login/ \
 **Output:**
 ```json
 {
-  "token": "2b813dfedde303e59b23667584b792f2d2767248"
+  "token": "dee6d4ab110568b3feae114768f6e12c97a4ade0"
 }
 ```
 
@@ -52,7 +52,7 @@ curl -X POST http://127.0.0.1:8000/api/login/ \
 **Command:**
 ```bash
 curl -X POST http://localhost:8000/api/debts/ \
--H "Authorization: Token 2b813dfedde303e59b23667584b792f2d2767248" \
+-H "Authorization: Token dee6d4ab110568b3feae114768f6e12c97a4ade0" \
 -H "Content-Type: application/json" \
 -d '{
     "amount": 5000.00,
@@ -70,7 +70,7 @@ curl -X POST http://localhost:8000/api/debts/ \
 **Command:**
 ```bash
 curl -X POST http://localhost:8000/api/transactions/ \
--H "Authorization: Token 2b813dfedde303e59b23667584b792f2d2767248" \
+-H "Authorization: Token dee6d4ab110568b3feae114768f6e12c97a4ade0" \
 -H "Content-Type: application/json" \
 -d '{
     "amount": 5000.00,
@@ -90,7 +90,7 @@ curl -X POST http://localhost:8000/api/transactions/ \
 **Command:**
 ```bash
 curl -X GET http://localhost:8000/api/transactions/11/ \
--H "Authorization: Token 2b813dfedde303e59b23667584b792f2d2767248"
+-H "Authorization: Token dee6d4ab110568b3feae114768f6e12c97a4ade0"
 ```
 **Output:**
 ```json
@@ -103,7 +103,7 @@ curl -X GET http://localhost:8000/api/transactions/11/ \
 **Command:**
 ```bash
 curl -X GET http://localhost:8000/api/transactions/0/ \
--H "Authorization: Token 2b813dfedde303e59b23667584b792f2d2767248"
+-H "Authorization: Token dee6d4ab110568b3feae114768f6e12c97a4ade0"
 ```
 **Output:**
 ```json
@@ -116,7 +116,7 @@ curl -X GET http://localhost:8000/api/transactions/0/ \
 **Command:**
 ```bash
 curl -X GET http://localhost:8000/api/debt-repayments/ \
--H "Authorization: Token 2b813dfedde303e59b23667584b792f2d2767248"
+-H "Authorization: Token dee6d4ab110568b3feae114768f6e12c97a4ade0"
 ```
 **Output:**
 ```json
@@ -129,7 +129,7 @@ curl -X GET http://localhost:8000/api/debt-repayments/ \
 **Command:**
 ```bash
 curl -X GET http://localhost:8000/api/financial-summary/ \
--H "Authorization: Token 2b813dfedde303e59b23667584b792f2d2767248"
+-H "Authorization: Token dee6d4ab110568b3feae114768f6e12c97a4ade0"
 ```
 **Output:**
 ```json
@@ -142,7 +142,7 @@ curl -X GET http://localhost:8000/api/financial-summary/ \
 **Command:**
 ```bash
 curl -X GET http://localhost:8000/api/financial-goals/ \
--H "Authorization: Token 2b813dfedde303e59b23667584b792f2d2767248"
+-H "Authorization: Token dee6d4ab110568b3feae114768f6e12c97a4ade0"
 ```
 **Output:**
 ```json
@@ -155,7 +155,7 @@ curl -X GET http://localhost:8000/api/financial-goals/ \
 **Command:**
 ```bash
 curl -X POST http://localhost:8000/api/financial-goals/ \
--H "Authorization: Token 2b813dfedde303e59b23667584b792f2d2767248" \
+-H "Authorization: Token dee6d4ab110568b3feae114768f6e12c97a4ade0" \
 -H "Content-Type: application/json" \
 -d '{
     "goal_name": "Buy a house",
@@ -174,7 +174,7 @@ curl -X POST http://localhost:8000/api/financial-goals/ \
 **Command:**
 ```bash
 curl -X GET http://localhost:8000/api/financial-goals/1/ \
--H "Authorization: Token 2b813dfedde303e59b23667584b792f2d2767248"
+-H "Authorization: Token dee6d4ab110568b3feae114768f6e12c97a4ade0"
 ```
 **Output:**
 ```json
